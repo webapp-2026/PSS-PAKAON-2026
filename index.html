@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Pioneer Service School: Meal Support</title>
+    <style>
+        :root {
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --primary-accent: #10b981; 
+            --admin-bg: #ecfdf5;
+            --success-color: #059669;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+            user-select: none; 
+            -webkit-user-select: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        .admin-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .lang-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: 1px solid var(--primary-accent);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-top: 40px;
+        }
+
+        h1 { font-size: 28px; margin-bottom: 8px; margin-top: 0; }
+        p.subtitle { color: var(--text-muted); margin-bottom: 15px; }
+
+        .legend-block {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px 20px;
+            max-width: 650px;
+            margin: 0 auto 30px auto;
+            text-align: left;
+            font-size: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .legend-block p { margin: 8px 0; }
+        .legend-red { color: var(--danger-color); font-weight: bold; }
+
+        .search-container { max-width: 400px; margin: 0 auto 40px auto; }
+        .search-container input {
+            width: 100%; padding: 16px 20px; border: 2px solid var(--primary-accent);
+            border-radius: 8px; font-size: 16px; box-sizing: border-box; outline: none;
+            user-select: text; -webkit-user-select: text;
+        }
+
+        .admin-panel {
+            background: var(--admin-bg); border: 1px solid #a7f3d0;
+            border-radius: 12px; padding: 20px; margin-bottom: 40px; display: none;
+        }
+
+        .admin-form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .admin-form input, .admin-form select {
+            width: 100%; padding: 14px 16px; border: 1px solid var(--border-color);
+            border-radius: 8px; margin-bottom: 10px; background: white;
+        }
+
+        .submit-btn { background: var(--primary-accent); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; flex: 1; }
+        .cancel-edit-btn { background: #e5e7eb; color: #4b5563; border: none; padding: 14px; border-radius: 8px; display: none; flex: 1; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+        .card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 20px; transition: transform 0.2s;
+        }
+
+        .card-header-date {
+            font-size: 17px; font-weight: 800; margin: 0 0 15px 0;
+            padding-bottom: 10px; border-bottom: 2px solid var(--primary-accent);
+        }
+
+        .day-monday { color: #3b82f6; border-bottom-color: #3b82f6; }
+        .day-tuesday { color: #8b5cf6; border-bottom-color: #8b5cf6; }
+        .day-wednesday { color: #ec4899; border-bottom-color: #ec4899; }
+        .day-thursday { color: #f97316; border-bottom-color: #f97316; }
+        .day-friday { color: #14b8a6; border-bottom-color: #14b8a6; }
+        .day-saturday { color: #6366f1; border-bottom-color: #6366f1; }
+        .day-sunday { color: #ef4444; border-bottom-color: #ef4444; }
+
+        .meal-row { margin-bottom: 12px; }
+        .meal-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+        .meal-value { font-size: 15px; font-weight: 500; user-select: text; -webkit-user-select: text; }
+
+        .search-highlight { color: var(--primary-accent); font-weight: 700; background: #ecfdf5; border-radius: 4px; }
+        .marker-red { color: var(--danger-color); font-weight: bold; }
+
+        .card-admin-actions { display: flex; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-color); }
+        .edit-btn { background: #f3f4f6; border: none; padding: 8px; border-radius: 6px; cursor: pointer; flex: 1; }
+        .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 8px; border-radius: 6px; cursor: pointer; flex: 1; }
+
+        footer {
+            margin-top: 50px; text-align: center; border-top: 1px solid var(--border-color);
+            padding-top: 20px; color: var(--text-muted); font-size: 14px;
+        }
+        .footer-highlight { color: var(--text-main); font-weight: 600; }
+
+        @media (max-width: 600px) {
+            .admin-form-grid { grid-template-columns: 1fr; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <button id="langToggle" class="lang-btn" data-i18n="langToggleText">🌐 English</button>
+        <button id="adminBtn" class="admin-btn" data-i18n="adminBtn">Para sa Admin</button>
+
+        <div id="adminPanel" class="admin-panel">
+            <h2 id="adminPanelTitle" data-i18n="adminTitleAdd">Admin Controls: Pagdugang og Iskedyul</h2>
+            <form id="addForm" class="admin-form">
+                <div class="admin-form-grid">
+                    <select id="newWeek" required>
+                        <option value="" disabled selected data-i18n="selectWeek">Pagpili og Semana...</option>
+                        <option value="First Week">First Week</option>
+                        <option value="Second Week">Second Week</option>
+                    </select>
+                    <input type="text" id="newDate" data-i18n-placeholder="datePlaceholder" placeholder="Petsa (eks., April 27)" required>
+                    <input type="text" id="newDay" data-i18n-placeholder="dayPlaceholder" placeholder="Adlaw (eks., Monday)" required>
+                    <input type="text" id="newSnackMorning" data-i18n-placeholder="snackMornPlaceholder" placeholder="Snack sa Buntag" required>
+                    <input type="text" id="newLunch" data-i18n-placeholder="lunchPlaceholder" placeholder="Lunch 12:00 pm" required>
+                    <input type="text" id="newSnackAfternoon" data-i18n-placeholder="snackAftPlaceholder" placeholder="Snack sa Hapon" required>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button type="submit" class="submit-btn" id="submitBtn" data-i18n="addBtn">Idugang</button>
+                    <button type="button" class="cancel-edit-btn" id="cancelEditBtn" data-i18n="cancelBtn">Kansela</button>
+                </div>
+            </form>
+            <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                <button type="button" id="viewAllBtn" class="edit-btn" style="max-width:200px" data-i18n="viewAll">Tan-awa Tanan</button>
+                <button id="closeAdminBtn" class="close-admin" style="background:none; border:none; text-decoration:underline; cursor:pointer;" data-i18n="closeAdmin">Isira Admin</button>
+            </div>
+        </div>
+
+        <header>
+            <div style="color:var(--primary-accent); font-weight:700; font-size:14px; letter-spacing:1.5px;">2026 PIONEER SERVICE SCHOOL</div>
+            <h1 data-i18n="subtitle">Iskedyul sa Pagkaon</h1>
+            <p class="subtitle" data-i18n="desc">Pangitaa ang inyong kongregasyon aron makita ang inyong asayn.</p>
+            
+            <div class="legend-block">
+                <p><strong data-i18n="noteLabel">Pahinumdom:</strong> <span data-i18n-html="note1">* Please <strong>include breakfast</strong> for 4 persons (Instructor & wives)</span></p>
+                <p><span data-i18n-html="note2">** Please <strong>include dinner</strong> for 4 persons (Instructor & wives)</span></p>
+                <p class="legend-red" data-i18n-html="note3"># Meal for <strong>4 persons only</strong> (Instructor & wives)</p>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Pangitaa (eks. Bontoc)...">
+            </div>
+        </header>
+
+        <div class="grid" id="scheduleGrid"></div>
+
+        <footer>
+            <p><span data-i18n="contactLabel">Kontaka si:</span> <span class="footer-highlight">Clemente, Mark (0966 531 6492)</span></p>
+            <p data-i18n="eventDetails">Ang Pioneer Service School karong tuiga pagahimoon sa Abril 27-Mayo 2, 2026 (1st batch-Bontoc KH) & Mayo 11-16, 2026 (2nd batch-Maasin KH)</p>
+        </footer>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAU3OHp5w-Zdn6ON3L7y0hg07Kztm5b8qg",
+            authDomain: "pss-meal-2026.firebaseapp.com",
+            projectId: "pss-meal-2026",
+            storageBucket: "pss-meal-2026.firebasestorage.app",
+            messagingSenderId: "935346627960",
+            appId: "1:935346627960:web:29aa02a13b04e65d8cd48d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        let scheduleData = [];
+        let currentLang = 'ceb';
+        let isAdminLoggedIn = false;
+        let isViewingAll = false;
+        let editingScheduleId = null;
+
+        const i18n = {
+            en: {
+                langToggleText: "🌐 Cebuano", adminBtn: "Admin Access", subtitle: "Meal Support Schedule",
+                desc: "Search for your congregation to find your assigned meal schedules.",
+                noteLabel: "Note:", note1: "* Please <strong>include breakfast</strong> for 4 persons (Instructor & wives)",
+                note2: "** Please <strong>include dinner</strong> for 4 persons (Instructor & wives)",
+                note3: "# Meal for <strong>4 persons only</strong> (Instructor & wives)",
+                searchPlaceholder: "Search (e.g. Bontoc)...",
+                adminTitleAdd: "Admin: Add Schedule", adminTitleEdit: "Admin: Edit Schedule",
+                selectWeek: "Select Week...", datePlaceholder: "Date (e.g., April 27)",
+                dayPlaceholder: "Day (e.g., Monday)", snackMornPlaceholder: "Snack sa Buntag",
+                lunchPlaceholder: "Lunch 12:00 pm", snackAftPlaceholder: "Snack sa Hapon",
+                addBtn: "Add", updateBtn: "Update", cancelBtn: "Cancel",
+                viewAll: "View All", closeAdmin: "Close Admin", editBtn: "Edit", deleteBtn: "Remove",
+                noResults: "No schedules found.", contactLabel: "Contact Person:",
+                eventDetails: "This year Pioneer Service School will be held on April 27-May 2, 2026 (1st batch-Bontoc KH) & May 11-16, 2026 (2nd batch-Maasin KH)"
+            },
+            ceb: {
+                langToggleText: "🌐 English", adminBtn: "Para sa Admin", subtitle: "Iskedyul sa Pagkaon",
+                desc: "Pangitaa ang inyong kongregasyon aron makita ang naka-asayn nga iskedyul sa pagkaon.",
+                noteLabel: "Pahinumdom:", note1: "* Palihug <strong>apila ang pamahaw</strong> para sa 4 ka tawo (Instruktor ug asawa)",
+                note2: "** Palihug <strong>apila ang panihapon</strong> para sa 4 ka tawo (Instruktor ug asawa)",
+                note3: "# Pagkaon para sa <strong>4 ka tawo lamang</strong> (Instruktor ug asawa)",
+                searchPlaceholder: "Pangitaa (eks. Bontoc)...",
+                adminTitleAdd: "Admin: Pagdugang og Iskedyul", adminTitleEdit: "Admin: Usba ang Iskedyul",
+                selectWeek: "Pagpili og Semana...", datePlaceholder: "Petsa (eks., April 27)",
+                dayPlaceholder: "Adlaw (eks., Monday)", snackMornPlaceholder: "Snack sa Buntag",
+                lunchPlaceholder: "Lunch 12:00 pm", snackAftPlaceholder: "Snack sa Hapon",
+                addBtn: "Idugang", updateBtn: "I-update", cancelBtn: "Kansela",
+                viewAll: "Tan-awa Tanan", closeAdmin: "Isira Admin", editBtn: "Usba", deleteBtn: "Papasa",
+                noResults: "Walay nakit-an nga iskedyul.", contactLabel: "Kontaka si:",
+                eventDetails: "Ang Pioneer Service School karong tuiga pagahimoon sa Abril 27-Mayo 2, 2026 (1st batch-Bontoc KH) & Mayo 11-16, 2026 (2nd batch-Maasin KH)"
+            }
+        };
+
+        function updateLanguage() {
+            const dict = i18n[currentLang];
+            document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = dict[el.dataset.i18n]);
+            document.querySelectorAll('[data-i18n-html]').forEach(el => el.innerHTML = dict[el.dataset.i18nHtml]);
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => el.placeholder = dict[el.dataset.i18nPlaceholder]);
+            applyFilters();
+        }
+
+        document.getElementById('langToggle').onclick = () => { currentLang = currentLang === 'en' ? 'ceb' : 'en'; updateLanguage(); };
+
+        const grid = document.getElementById('scheduleGrid');
+        onSnapshot(query(collection(db, "meal_support"), orderBy("timestamp", "asc")), (snap) => {
+            scheduleData = []; snap.forEach(doc => scheduleData.push({ id: doc.id, ...doc.data() }));
+            applyFilters();
+        });
+
+        function applyFilters() {
+            const term = document.getElementById('searchInput').value.toLowerCase().trim();
+            let data = term || (isAdminLoggedIn && isViewingAll) ? scheduleData.filter(item => {
+                if (!term) return true;
+                return `${item.date} ${item.day} ${item.snackMorning} ${item.lunch} ${item.snackAfternoon}`.toLowerCase().includes(term);
+            }) : null;
+            render(data, term);
+        }
+
+        function render(data, term) {
+            grid.innerHTML = data ? (data.length ? "" : `<div class="no-results">${i18n[currentLang].noResults}</div>`) : "";
+            if (!data) return;
+            data.forEach(item => {
+                const venue = item.week === "First Week" ? "(Bontoc KH)" : "(Maasin KH)";
+                const card = document.createElement('div');
+                card.className = 'card';
+                const dayClass = (item.day || "").toLowerCase().trim();
+                const highlight = (t) => t.replace(new RegExp(`(${term})`, 'gi'), '<span class="search-highlight">$1</span>').replace(/#/g, '<span class="marker-red">#</span>');
+                
+                card.innerHTML = `
+                    <h3 class="card-header-date day-${dayClass.split(' ')[0]}">${item.date} - ${item.day} - ${venue}</h3>
+                    <div class="meal-row"><div class="meal-label">SNACK SA BUNTAG</div><div class="meal-value">${highlight(item.snackMorning)}</div></div>
+                    <div class="meal-row"><div class="meal-label">LUNCH 12:00 PM</div><div class="meal-value">${highlight(item.lunch)}</div></div>
+                    <div class="meal-row"><div class="meal-label">SNACK SA HAPON</div><div class="meal-value">${highlight(item.snackAfternoon)}</div></div>
+                    ${isAdminLoggedIn ? `<div class="card-admin-actions"><button class="edit-btn" onclick="window.editItem('${item.id}')">${i18n[currentLang].editBtn}</button><button class="delete-btn" onclick="window.deleteItem('${item.id}')">${i18n[currentLang].deleteBtn}</button></div>` : ""}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        document.getElementById('searchInput').oninput = applyFilters;
+        document.getElementById('adminBtn').onclick = () => {
+            if (prompt("Admin Password:") === "makoy") {
+                isAdminLoggedIn = true; document.getElementById('adminPanel').style.display = "block";
+                document.getElementById('adminBtn').style.display = "none"; applyFilters();
+            }
+        };
+
+        document.getElementById('addForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                week: document.getElementById('newWeek').value, date: document.getElementById('newDate').value,
+                day: document.getElementById('newDay').value, snackMorning: document.getElementById('newSnackMorning').value,
+                lunch: document.getElementById('newLunch').value, snackAfternoon: document.getElementById('newSnackAfternoon').value,
+                timestamp: Date.now()
+            };
+            editingScheduleId ? await updateDoc(doc(db, "meal_support", editingScheduleId), data) : await addDoc(collection(db, "meal_support"), data);
+            e.target.reset(); editingScheduleId = null; document.getElementById('submitBtn').textContent = i18n[currentLang].addBtn;
+            document.getElementById('cancelEditBtn').style.display = "none";
+        };
+
+        window.editItem = (id) => {
+            const item = scheduleData.find(i => i.id === id);
+            editingScheduleId = id; document.getElementById('newWeek').value = item.week;
+            document.getElementById('newDate').value = item.date; document.getElementById('newDay').value = item.day;
+            document.getElementById('newSnackMorning').value = item.snackMorning; document.getElementById('newLunch').value = item.lunch;
+            document.getElementById('newSnackAfternoon').value = item.snackAfternoon;
+            document.getElementById('submitBtn').textContent = i18n[currentLang].updateBtn;
+            document.getElementById('cancelEditBtn').style.display = "block"; window.scrollTo(0,0);
+        };
+        window.deleteItem = async (id) => { if(confirm("Remove?")) await deleteDoc(doc(db, "meal_support", id)); };
+        document.getElementById('cancelEditBtn').onclick = () => { editingScheduleId = null; document.getElementById('addForm').reset(); document.getElementById('cancelEditBtn').style.display = "none"; document.getElementById('submitBtn').textContent = i18n[currentLang].addBtn; };
+        document.getElementById('viewAllBtn').onclick = () => { isViewingAll = true; applyFilters(); };
+        document.getElementById('closeAdminBtn').onclick = () => { isAdminLoggedIn = false; document.getElementById('adminPanel').style.display = "none"; document.getElementById('adminBtn').style.display = "block"; applyFilters(); };
+        updateLanguage();
+    </script>
+</body>
+</html>
