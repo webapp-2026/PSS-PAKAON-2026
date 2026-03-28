@@ -318,6 +318,13 @@
             }, 300);
         });
 
+        // Hide mobile keyboard when "Enter" is pressed
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                this.blur();
+            }
+        });
+
         document.getElementById('adminBtn').onclick = () => {
             if (prompt("Admin Password:") === "makoy") {
                 isAdminLoggedIn = true; document.getElementById('adminPanel').style.display = "block";
