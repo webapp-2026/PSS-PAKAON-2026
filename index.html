@@ -310,6 +310,14 @@
         }
 
         document.getElementById('searchInput').oninput = applyFilters;
+
+        // Auto-scroll on mobile when the search input is focused
+        document.getElementById('searchInput').addEventListener('focus', function() {
+            setTimeout(() => {
+                this.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        });
+
         document.getElementById('adminBtn').onclick = () => {
             if (prompt("Admin Password:") === "makoy") {
                 isAdminLoggedIn = true; document.getElementById('adminPanel').style.display = "block";
